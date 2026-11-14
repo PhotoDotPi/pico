@@ -8,6 +8,6 @@ NestedInstallerFiles:
 Installers:
   - Architecture: x64
     InstallerUrl: https://github.com/PhotoDotPi/pico/releases/download/pico-v1.0.0/pico-1.0.0-x86_64-pc-windows-msvc.zip
-    InstallerSha256: REPLACE_WITH_SHA256
+    InstallerSha256: 1eaba2fcf1cc462d97893c24cd847fa7bff5dc7fb60b514cf0e1042a1357c3dc
 ManifestType: installer
 ManifestVersion: 1.6.0

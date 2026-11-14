@@ -6,7 +6,7 @@ $packageArgs = @{
   packageName    = 'pico'
   url            = $url
   unzipLocation  = $toolsDir
-  checksum       = 'REPLACE_WITH_SHA256'
+  checksum       = '1eaba2fcf1cc462d97893c24cd847fa7bff5dc7fb60b514cf0e1042a1357c3dc'
   checksumType   = 'sha256'
 }
 Install-ChocolateyZipPackage @packageArgs
