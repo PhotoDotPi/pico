@@ -72,7 +72,7 @@ winget install PhotoDotPi.pico
 choco install pico
 
 # crates.io
-cargo install pico
+cargo install pico-echo
 ```
 
 ### One-line installer
