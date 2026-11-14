@@ -54,6 +54,37 @@ cargo build --release
 cargo install --path .
 ```
 
+### Package managers
+
+```sh
+# Homebrew (macOS/Linux)
+brew tap PhotoDotPi/tap
+brew install pico
+
+# Scoop (Windows)
+scoop bucket add photodotpi https://github.com/PhotoDotPi/scoop-bucket
+scoop install pico
+
+# winget (Windows)
+winget install PhotoDotPi.pico
+
+# Chocolatey (Windows)
+choco install pico
+
+# crates.io
+cargo install pico
+```
+
+### One-line installer
+
+```sh
+# macOS/Linux
+curl -fsSL https://raw.githubusercontent.com/PhotoDotPi/pico/main/install.sh | sh
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/PhotoDotPi/pico/main/install.ps1 | iex
+```
+
 ## Usage
 
 ```sh
