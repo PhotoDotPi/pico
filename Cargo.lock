@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "pico"
+name = "pico-echo"
 version = "1.0.0"
