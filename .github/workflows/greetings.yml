@@ -1,0 +1,25 @@
+name: Greetings
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  greeting:
+    name: Greet first-time contributors
+    if: github.repository == 'PhotoDotPi/pico'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
+        with:
+          issue_message: |
+            Thanks for opening your first issue in pico!
+          pr_message: |
+            Thanks for your first pull request to pico! Please ensure `cargo test` and `cargo clippy --all` pass locally.

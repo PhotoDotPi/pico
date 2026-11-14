@@ -1,0 +1,10 @@
+# rustfmt configuration. Only stable options are used so that
+# `cargo fmt --check` behaves identically on every supported toolchain.
+# (Do not add nightly-only options such as `format_code_in_doc_comments`;
+# they emit warnings on stable and make CI non-deterministic.)
+edition = "2024"
+max_width = 100
+tab_spaces = 4
+use_field_init_shorthand = true
+use_try_shorthand = true
+newline_style = "Auto"

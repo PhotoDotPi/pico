@@ -1,0 +1,72 @@
+name: Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  deny:
+    name: cargo-deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25
+        with:
+          command: check
+
+
+
+
+
+
+  coverage:
+    name: coverage (cargo-llvm-cov, advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install pinned toolchain with coverage tools
+        shell: bash
+        run: |
+          channel="$(grep -E '^channel' rust-toolchain.toml | cut -d'"' -f2)"
+          rustup toolchain install "$channel" --profile minimal --component llvm-tools-preview
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39
+        with:
+          tool: cargo-llvm-cov
+      - name: Measure and report coverage
+
+
+        run: cargo llvm-cov --all-features --locked --summary-only --no-fail-fast
+      - name: Coverage summary in the run summary
+        if: always()
+        run: |
+          {
+            echo "## Coverage (advisory)"
+            echo
+            echo '```'
+            cargo llvm-cov report --summary-only 2>/dev/null || echo "coverage data unavailable"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+
+  typos:
+    name: typos (advisory)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39
+        with:
+          tool: typos
+      - run: typos

@@ -1,0 +1,5 @@
+# zizmor configuration
+rules:
+  template-injection:
+    config:
+      allowed-github-hosted-runners: []

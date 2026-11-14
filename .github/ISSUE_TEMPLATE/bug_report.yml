@@ -1,0 +1,62 @@
+name: Bug report
+description: Report a bug in pico.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do **not** report security issues here —
+        see SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: pico version / commit
+      description: Output of `pico --version`, or the commit SHA.
+      placeholder: "pico 0.1.0 / commit abc1234"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other (describe below)
+    validations:
+      required: true
+  - type: input
+    id: rust
+    attributes:
+      label: Rust toolchain
+      description: Output of `rustc --version` (if you built from source).
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the exact command, the actual output/exit status, and the expected output/exit status.
+      placeholder: |
+        Command: pico ...
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Reference comparison (optional)
+      description: If comparing to another echo, say which implementation and version.
+      placeholder: "GNU Coreutils 9.12"
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Anything else
+      description: Environment variables (e.g. POSIXLY_CORRECT), shell, locale, terminal.
+    validations:
+      required: false

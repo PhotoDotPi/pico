@@ -1,0 +1,8 @@
+[alias]
+fmt-check = "fmt --all -- --check"
+lint = "clippy --all-targets --all-features -- -D warnings"
+t = "test --all-features"
+build-rel = "build --release"
+
+[build]
+incremental = true

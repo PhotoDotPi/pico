@@ -1,0 +1,12 @@
+src:
+  - src/**
+tests:
+  - tests/**
+ci:
+  - .github/**
+docs:
+  - '**/*.md'
+  - docs/**
+dependencies:
+  - Cargo.toml
+  - Cargo.lock

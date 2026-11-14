@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest a feature or compatibility improvement.
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `pico` keeps compatibility mode separate from the opt-in extended mode
+        (`--extended`). Please say which mode your request belongs to.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - Compatibility mode (matches a reference echo)
+        - Extended mode (`--extended`)
+        - Tooling / documentation
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that you cannot do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: Include exact command lines and expected output bytes/exit status where possible.
+    validations:
+      required: true
+  - type: input
+    id: reference
+    attributes:
+      label: Reference implementation (if compatibility-related)
+      description: Which echo/implementation should be matched, and its version?
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
