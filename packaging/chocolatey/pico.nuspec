@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>pico</id>
+    <version>1.0.0</version>
+    <title>pico</title>
+    <authors>PhotoDotPi</authors>
+    <owners>PhotoDotPi</owners>
+    <licenseUrl>https://github.com/PhotoDotPi/pico/blob/main/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/PhotoDotPi/pico</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Modern, backward-compatible replacement for the Unix echo utility.</description>
+    <tags>pico echo cli</tags>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

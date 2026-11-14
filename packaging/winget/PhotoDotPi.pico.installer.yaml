@@ -1,0 +1,13 @@
+PackageIdentifier: PhotoDotPi.pico
+PackageVersion: 1.0.0
+InstallerType: zip
+NestedInstallerType: portable
+NestedInstallerFiles:
+  - RelativeFilePath: pico.exe
+    PortableCommandAlias: pico
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/PhotoDotPi/pico/releases/download/pico-v1.0.0/pico-1.0.0-x86_64-pc-windows-msvc.zip
+    InstallerSha256: REPLACE_WITH_SHA256
+ManifestType: installer
+ManifestVersion: 1.6.0

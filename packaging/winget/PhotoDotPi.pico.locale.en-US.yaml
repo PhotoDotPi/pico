@@ -1,0 +1,9 @@
+PackageIdentifier: PhotoDotPi.pico
+PackageVersion: 1.0.0
+PackageLocale: en-US
+Publisher: PhotoDotPi
+PackageName: pico
+License: AGPL-3.0-only
+ShortDescription: Modern, backward-compatible replacement for the Unix echo utility
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

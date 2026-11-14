@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  crates:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install pinned toolchain
+        run: |
+          channel="$(grep -E '^channel' rust-toolchain.toml | cut -d'"' -f2)"
+          rustup toolchain install "$channel" --profile minimal
+      - run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }} --locked
+
+  winget:
+    name: Submit to winget
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Install wingetcreate
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/microsoft/winget-create/releases/latest/download/wingetcreate.exe" -OutFile "wingetcreate.exe"
+      - name: Submit manifest
+        run: |
+          .\wingetcreate.exe submit --token ${{ secrets.GITHUB_TOKEN }} packaging/winget
+
+  chocolatey:
+    name: Push to Chocolatey
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Pack and push
+        shell: pwsh
+        run: |
+          choco pack packaging/chocolatey/pico.nuspec
+          choco push *.nupkg --source https://push.chocolatey.org/ --api-key ${{ secrets.CHOCOLATEY_API_KEY }}
+
+  scoop:
+    name: Update Scoop bucket
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Update PhotoDotPi/scoop-bucket via Excavator bot or manually."

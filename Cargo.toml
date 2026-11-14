@@ -9,7 +9,7 @@ repository = "https://github.com/PhotoDotPi/pico"
 homepage = "https://github.com/PhotoDotPi/pico"
 keywords = ["cli", "echo", "text", "utility", "command-line"]
 categories = ["command-line-utilities"]
-publish = false
+
 
 [[bin]]
 name = "pico"

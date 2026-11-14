@@ -1,0 +1,133 @@
+name: Release Build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build for (e.g. v1.0.0)"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            archive: tar.gz
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            archive: tar.gz
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            archive: tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            archive: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            archive: zip
+    steps:
+      - name: Resolve tag
+        id: tag
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - name: Install pinned toolchain
+        shell: bash
+        run: |
+          channel="$(grep -E '^channel' rust-toolchain.toml | cut -d'"' -f2)"
+          rustup toolchain install "$channel" --profile minimal
+
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Install aarch64 Linux cross linker
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+        run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Package (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          version="${TAG#pico-v}"
+          name="pico-${version}-${TARGET}"
+          root="dist/${name}"
+          mkdir -p "${root}"
+          if [[ "${TARGET}" == *windows* ]]; then
+            cp "target/${TARGET}/release/pico.exe" "${root}/pico.exe"
+          else
+            cp "target/${TARGET}/release/pico" "${root}/pico"
+            chmod +x "${root}/pico"
+          fi
+          cp LICENSE "${root}/LICENSE"
+          cd dist
+          tar -czf "${name}.tar.gz" "${name}"
+          sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256"
+
+      - name: Package (zip)
+        if: matrix.archive == 'zip'
+        shell: pwsh
+        env:
+          TARGET: ${{ matrix.target }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $version = $env:TAG -replace '^pico-v', ''
+          $name = "pico-$version-$env:TARGET"
+          $root = "dist\$name"
+          New-Item -ItemType Directory -Force -Path $root | Out-Null
+          Copy-Item "target\$env:TARGET\release\pico.exe" "$root\pico.exe"
+          Copy-Item "LICENSE" "$root\LICENSE"
+          Compress-Archive -Path "$root\*" -DestinationPath "dist\$name.zip" -Force
+          $hash = (Get-FileHash "dist\$name.zip" -Algorithm SHA256).Hash.ToLower()
+          "$hash  $name.zip" | Out-File "dist\$name.zip.sha256" -Encoding ascii
+
+      - name: Upload assets to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          TARGET: ${{ matrix.target }}
+          ARCHIVE: ${{ matrix.archive }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${TAG#pico-v}"
+          name="pico-${version}-${TARGET}"
+          cd dist
+          if [[ "${ARCHIVE}" == "zip" ]]; then
+            gh release upload "${TAG}" "${name}.zip" "${name}.zip.sha256" --clobber
+          else
+            gh release upload "${TAG}" "${name}.tar.gz" "${name}.tar.gz.sha256" --clobber
+          fi
